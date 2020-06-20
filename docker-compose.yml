@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+    dob-nginx:
+        build: ./nginx/
+        ports:
+            - 80:80
+        volumes:
+            - "${PROJECT_ROOT}:/var/www/html"
+            - /home/vagrant/dob-2018-sep-exam-1/nginx/conf/site.conf:/etc/nginx/conf.d/site.conf
+        networks:
+            - dob-network
+        links:
+            - dob-php
+            - dob-mysql
+    
+
+    dob-php:
+        build: ./php/
+        ports:
+            - 80:80
+        volumes:
+            - "${PROJECT_ROOT}:/var/www/html:ro"
+        networks:
+            - dob-network
+        depends_on:
+            - dob-mysql
+
+    dob-mysql:
+        build: ./mysql/
+        networks:
+            - dob-network
+        environment:
+            MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+
+networks:
+    dob-network:
